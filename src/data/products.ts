@@ -6,8 +6,8 @@ export type ProductItem = {
   id: string;
   emoji: string;
   name: string;
-  category: string;
-  storage: StorageLocation[];
+  category?: string;
+  storage?: StorageLocation[];
 };
 
 export type ProductsDataset = {

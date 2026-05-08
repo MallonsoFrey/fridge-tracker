@@ -5,6 +5,7 @@ import { format, isValid, parse } from "date-fns";
 import { ru } from "date-fns/locale";
 import { maskDateInput } from "@/utils/maskDateInput";
 import { productItems, type ProductItem } from "@/data/products";
+import { useAddedProducts } from "@/store/addedProductsStore";
 
 export default function AddProduct() {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
@@ -15,6 +16,11 @@ export default function AddProduct() {
   const [inputValue, setInputValue] = useState("");
   const [productName, setProductName] = useState("");
   const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<ProductItem | null>(
+    null,
+  );
+
+  const addProduct = useAddedProducts((state) => state.addProduct);
 
   const productSuggestions: ProductItem[] = useMemo(() => {
     const q = productName.trim().toLowerCase();
@@ -23,7 +29,6 @@ export default function AddProduct() {
       .filter((p) => p.name.toLowerCase().includes(q))
       .slice(0, 8);
   }, [productName]);
-
 
   const handleDayPickerSelect = (date: Date | undefined) => {
     if (!date) {
@@ -52,7 +57,7 @@ export default function AddProduct() {
 
     const strictlyMatchesMask =
       isValid(parsedDate) && format(parsedDate, "dd/MM/yyyy") === masked;
-    
+
     if (!strictlyMatchesMask) {
       setInputValue(lastValidDateInputRef.current);
       setSelectedDate(
@@ -67,11 +72,6 @@ export default function AddProduct() {
     setInputValue(masked);
     setSelectedDate(parsedDate);
     setMonth(parsedDate);
-  };
-
-  const handleSaveProduct = () => {
-    console.log(productName);
-    console.log(selectedDate);
   };
 
   const toggleCalender = () => setIsCalendarOpen((prev) => !prev);
@@ -117,6 +117,7 @@ export default function AddProduct() {
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={() => {
                   setProductName(p.name);
+                  setSelectedProduct(p);
                   setIsSuggestionsOpen(false);
                 }}
               >
@@ -196,7 +197,7 @@ export default function AddProduct() {
       </div>
 
       <button
-        onClick={handleSaveProduct}
+        onClick={() => addProduct(selectedProduct)}
         className="flex justify-center items-center w-full h-6 transition-transform duration-100 ease-in-out active:translate-y-[3px] active:shadow-md active:bg-[#4c6046] hover:shadow-md bg-[#6F8D67] hover:bg-[#4c6046] text-white text-sm py-4 px-5 rounded-[22px]"
       >
         Сохранить
