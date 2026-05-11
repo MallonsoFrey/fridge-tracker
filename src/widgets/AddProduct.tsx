@@ -197,7 +197,11 @@ export default function AddProduct() {
       </div>
 
       <button
-        onClick={() => addProduct(selectedProduct)}
+        onClick={() => {
+          if (selectedProduct) {
+            addProduct(selectedProduct);
+          }
+        }}
         className="flex justify-center items-center w-full h-6 transition-transform duration-100 ease-in-out active:translate-y-[3px] active:shadow-md active:bg-[#4c6046] hover:shadow-md bg-[#6F8D67] hover:bg-[#4c6046] text-white text-sm py-4 px-5 rounded-[22px]"
       >
         Сохранить
